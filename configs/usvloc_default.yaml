@@ -1,0 +1,136 @@
+project:
+  name: usvloc_default_50ep
+
+paths:
+  outputs_root: outputs
+  cache_root: cache
+
+dataset:
+  name: kitti
+  processed_root: data
+  train_sequence: "00"
+  train_split_tags: null
+  train_max_frame_id: 2999
+  bev_resolution_m_per_pixel: 0.4
+  kitti_loader_train_mode: kitti_train_bgr
+  kitti_loader_eval_mode: kitti_eval_gray3
+  expected_meters_per_pixel: 0.4
+  expected_model_input_size: 201
+
+model:
+  input_size: 201
+  input_channels: 3
+  frontend_pretrained: true
+  frontend_backbone_name: resnet34
+  frontend_rotations: 1
+  frontend_rotations_train: 1
+  frontend:
+    mode: polar
+    spatial_attention:
+      enabled: false
+      reduction: 4
+    polar:
+      radial_bins: 16
+      angular_bins: 64
+      center_xy: [13.0, 13.0]
+      align_corners: false
+      mix_style:
+        enabled: true
+        p: 0.5
+        alpha: 0.1
+        eps: 1.0e-6
+    circular_conv:
+      depth: 3
+      kernel_size: 3
+    polar_attention:
+      enabled: true
+      num_heads: 4
+      rope_mode: p_rope
+      attn_dropout: 0.1
+      proj_dropout: 0.1
+      residual_scale_init: 0.1
+      norm_eps: 1.0e-5
+    theta_pool: gem
+    theta_pool_gem_p_init: 3.0
+    aggregator:
+      type: radial_mix
+      in_rows: 16
+      out_channels: 512
+      mix_depth: 3
+      mlp_ratio: 1.0
+      out_rows: 8
+      kmeans_init: false
+    keypoint_head:
+      enabled: false
+
+training:
+  seed: 1024
+  num_workers: 4
+  torch_num_threads: 4
+  torch_num_interop_threads: 1
+  cv2_num_threads: 1
+  worker_torch_num_threads: 1
+  worker_torch_num_interop_threads: 1
+  worker_cv2_num_threads: 1
+  log_interval: 25
+  init_checkpoint: null
+  stage2:
+    epochs: 50
+    batch_size: 4
+    lr: 5.0e-5
+    optimizer: adamw
+    weight_decay: 1.0e-4
+    eval_every_epochs: 1
+    grad_clip_norm: 10.0
+    param_groups:
+      polar_attention_lr_mult: 0.1
+    scheduler:
+      enabled: true
+      type: cosine
+      T_max: 50
+      eta_min: 5.0e-6
+      warmup_epochs: 3
+      warmup_start_factor: 0.33
+    loss:
+      name: lazy_triplet
+      margin: 0.3
+    dataset:
+      augment_random_rotation: true
+      positive_distance_threshold_m: 5.0
+      negative_distance_threshold_m: 7.0
+      num_negatives: 10
+      hard_mining_enabled: true
+      hard_mining_mode: epoch_cache
+      hard_negative_candidate_pool_size: 10
+      hard_positive_mining_enabled: false
+
+evaluation:
+  sequences: all
+  positive_radius_m: 5.0
+  place_positive_radius_m: 5.0
+  retrieval_metric: l2
+  faiss_gpu: true
+  eval_batch_size: 64
+  place_ks: [1, 5]
+  use_one_percent: true
+  best_metric: nclt_mean_recall_at_1
+  cross_dataset_eval:
+    enabled: true
+    metric_prefix: nclt
+    dataset_name: nclt
+    processed_root: data
+    database_sequence: "2012-01-15"
+    sequences:
+      - "2012-02-04"
+      - "2012-03-17"
+      - "2012-06-15"
+      - "2012-09-28"
+      - "2012-11-16"
+      - "2013-02-23"
+    positive_radius_m: 5.0
+    place_positive_radius_m: 5.0
+    retrieval_metric: l2
+    faiss_gpu: true
+    eval_batch_size: 64
+    place_ks: [1, 5]
+    use_one_percent: true
