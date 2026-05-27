@@ -15,6 +15,9 @@ USVLoc is a compact LiDAR place recognition framework built around polar BEV des
 
 This repository is an anonymized release of the core implementation for training, place recognition, loop closure, global localization, and real-world USV experiments.
 
+> **Release Note**
+> Additional code, usage notes, and pretrained model files will be released in this repository after paper acceptance.
+
 ## Highlights
 
 - **Cross-platform LiDAR localization** for road scenes and inland waterway USV deployments.
@@ -353,5 +356,3 @@ If you use this repository, please cite the paper:
   year    = {2026}
 }
 ```
-
-Additional code, usage notes, and pretrained model files will be released in this repository after paper acceptance.
