@@ -133,8 +133,6 @@ This release includes one checkpoint:
 checkpoint/results/final_best_place/usvloc_best_place_recognition.pt
 ```
 
-It contains only the model `state_dict`. It does not include optimizer state, experiment history, or local machine paths.
-
 ## Quick Start
 
 Evaluate KITTI place recognition:
@@ -195,12 +193,6 @@ GPU_ID=0 \
 CHECKPOINT=outputs/train_from_scratch/checkpoint_latest.pt \
 OUTPUT_DIR=outputs/train_resume \
 bash scripts/train_from_checkpoint.sh
-```
-
-If the checkpoint contains optimizer state, enable optimizer resume:
-
-```bash
-LOAD_OPTIMIZER=1 bash scripts/train_from_checkpoint.sh
 ```
 
 ## Place Recognition
