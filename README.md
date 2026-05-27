@@ -49,13 +49,6 @@ conda activate usvloc
 pip install -r requirements.txt
 ```
 
-Or use an existing environment:
-
-```bash
-conda activate usvloc
-cd /path/to/usvloc-release
-```
-
 Core dependencies are listed in `requirements.txt`:
 
 ```text
@@ -72,7 +65,7 @@ faiss-cpu
 ## Repository Layout
 
 ```text
-usvloc-release/
+usvloc/
   README.md
   requirements.txt
   configs/
